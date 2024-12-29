@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if ! command -v node &> /dev/null
+then
+    echo "Node.js could not be found. Please install Node.js."
+    exit 1
+fi
+
+if ! command -v ng &> /dev/null
+then
+    echo "Angular CLI could not be found. Please install Angular CLI."
+    exit 1
+fi
+
+if [ -z "$NODE_ENV" ]; then
+  echo "NODE_ENV="
+else
+  echo "NODE_ENV=$NODE_ENV"
+fi
+
+if [ -z "$1" ]; then
+  echo "Usage: node-start PROJECT"
+  echo "Project setup."
+  exit 1
+fi
+
+node "$(dirname "$0")/node-start.js" "$1"

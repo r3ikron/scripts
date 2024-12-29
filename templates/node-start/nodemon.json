@@ -1,0 +1,10 @@
+{
+  "watch": [
+    "index.js",
+    "lib",
+    "src",
+    "views"
+  ],
+  "ext": "js,json,ejs,html",
+  "exec": "concurrently --kill-others \"node index.js\" \"node ./templates/node_modules/@angular/cli/bin/ng build --watch --base-href=/app/\""
+}
