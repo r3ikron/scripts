@@ -1,6 +1,7 @@
 const { execSync } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const handlebars = require("handlebars");
 
 const PROJECT = process.argv[2];
 if (!PROJECT) {
@@ -39,7 +40,7 @@ createFiles(placeholderFiles);
 
 //run("license MIT");
 //run("gitignore Node");
-//fs.appendFileSync(".gitignore", "/data/db\n/data/files\n");
+//fs.appendFileSync(".gitignore", "\n/data/db\n/data/files\n");
 
 const installDeps = (deps, dev = false) => run(`npm i --loglevel silent ${dev ? "-D " : ""}${deps.join(" ")}`, true);
 installDeps([
@@ -91,15 +92,9 @@ const fileMappings = [
 ];
 
 const templateVariables = {
-  PROJECT: PROJECT,
-  PROJECT_TITLE: PROJECT_TITLE,
+  PROJECT,
+  PROJECT_TITLE,
 };
-
-function renderTemplate(template, variables) {
-  return template.replace(/{{\s*(\w+)\s*}}/g, (match, variable) => {
-    return variables[variable] !== undefined ? variables[variable] : match;
-  });
-}
 
 fileMappings.forEach(({ destination }) => {
   const destinationDir = path.dirname(destination);
@@ -110,7 +105,8 @@ fileMappings.forEach(({ destination }) => {
 
 fileMappings.forEach(({ template, destination }) => {
   const templateContent = fs.readFileSync(path.join(templateBasePath, template), "utf8");
-  const outputContent = renderTemplate(templateContent, templateVariables);
+  const compiledTemplate = handlebars.compile(templateContent);
+  const outputContent = compiledTemplate(templateVariables);
 
   fs.writeFileSync(destination, outputContent);
 });
